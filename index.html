@@ -8,11 +8,29 @@
     <title>EOS-503</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
     <script>
-      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/WebGL-Testing-Build.loader.json", {onProgress: UnityProgress});
-    </script>
+  var buildUrl = "Build";
+  var loaderUrl = buildUrl + "/WebGL Testing Build.loader.js";
+  var config = {
+    dataUrl: buildUrl + "/WebGL Testing Build.data",
+    frameworkUrl: buildUrl + "/WebGL Testing Build.framework.js",
+    codeUrl: buildUrl + "/WebGL Testing Build.wasm",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "Pyrebug",
+    productName: "EOS-503",
+    productVersion: "1.0",
+  };
+
+  var container = document.querySelector("#unityContainer");
+  var script = document.createElement("script");
+  script.src = loaderUrl;
+  script.onload = () => {
+    createUnityInstance(container, config).then((instance) => {
+      window.unityInstance = instance;
+    });
+  };
+  document.body.appendChild(script);
+</script>
   </head>
   <body>
     <div id="custom-bg" hidden></div>
