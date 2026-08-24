@@ -8,7 +8,26 @@
     <title>EOS-503</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script>
+  </head>
+  <body>
+    <div id="custom-bg" hidden></div>
+    <div id="custom-logo" hidden></div>
+
+    <div id="custom-loader" hidden>
+      <div class="fill"></div>
+      <div class="label"></div>
+    </div>
+
+    <div class="webgl-content">
+      <div id="unityContainer" style="width: 1280px; height: 720px; background: rgba(0, 0, 0, 0) !important;"></div>
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+        <div class="title">EOS-503</div>
+      </div>
+    </div>
+	<script>
+window.addEventListener("DOMContentLoaded", () => {
   var buildUrl = "Build";
   var loaderUrl = buildUrl + "/WebGL Testing Build.loader.js";
   var config = {
@@ -29,25 +48,9 @@
       window.unityInstance = instance;
     });
   };
+
   document.body.appendChild(script);
+});
 </script>
-  </head>
-  <body>
-    <div id="custom-bg" hidden></div>
-    <div id="custom-logo" hidden></div>
-
-    <div id="custom-loader" hidden>
-      <div class="fill"></div>
-      <div class="label"></div>
-    </div>
-
-    <div class="webgl-content">
-      <div id="unityContainer" style="width: 1280px; height: 720px; background: rgba(0, 0, 0, 0) !important;"></div>
-      <div class="footer">
-        <div class="webgl-logo"></div>
-        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
-        <div class="title">EOS-503</div>
-      </div>
-    </div>
   </body>
 </html>
