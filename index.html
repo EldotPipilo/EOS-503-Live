@@ -27,7 +27,7 @@
       </div>
     </div>
 	<script>
-window.addEventListener("DOMContentLoaded", () => {
+(function () {
   var buildUrl = "Build";
   var loaderUrl = buildUrl + "/WebGL Testing Build.loader.js";
   var config = {
@@ -40,17 +40,35 @@ window.addEventListener("DOMContentLoaded", () => {
     productVersion: "1.0",
   };
 
-  var container = document.querySelector("#unityContainer");
-  var script = document.createElement("script");
-  script.src = loaderUrl;
-  script.onload = () => {
-    createUnityInstance(container, config).then((instance) => {
-      window.unityInstance = instance;
-    });
-  };
+  function bootUnity() {
+    var container = document.getElementById("unityContainer");
+    if (!container) {
+      console.error("Missing #unityContainer");
+      return;
+    }
 
-  document.body.appendChild(script);
-});
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = function () {
+      createUnityInstance(container, config).then(function (instance) {
+        window.unityInstance = instance;
+      }).catch(function (e) {
+        console.error(e);
+      });
+    };
+    script.onerror = function () {
+      console.error("Failed to load:", loaderUrl);
+    };
+
+    (document.head || document.documentElement).appendChild(script);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootUnity);
+  } else {
+    bootUnity();
+  }
+})();
 </script>
   </body>
 </html>
