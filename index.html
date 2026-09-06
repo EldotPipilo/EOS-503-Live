@@ -60,11 +60,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGLTestingBuild.loader.js";
+      var loaderUrl = buildUrl + "/EOS-503-Live.loader.js";
       var config = {
-        dataUrl: buildUrl + "/WebGLTestingBuild.data",
-        frameworkUrl: buildUrl + "/WebGLTestingBuild.framework.js",
-        codeUrl: buildUrl + "/WebGLTestingBuild.wasm",
+        dataUrl: buildUrl + "/EOS-503-Live.data",
+        frameworkUrl: buildUrl + "/EOS-503-Live.framework.js",
+        codeUrl: buildUrl + "/EOS-503-Live.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "PyrebugStudios",
         productName: "EOS-503",
@@ -101,10 +101,30 @@
         canvas.style.height = "720px";
       }
 
+      // Keep failures visible above the custom loading overlay. A failed loader
+      // never calls createUnityInstance, so its Promise cannot report that error.
+      var loadingFailed = false;
+      function showLoadFailure(message) {
+        if (loadingFailed) return;
+        loadingFailed = true;
+        customLabel.textContent = "Loading failed";
+        var errorPanel = document.createElement("div");
+        errorPanel.setAttribute("role", "alert");
+        errorPanel.style.cssText = "position:fixed;inset:10% 8% auto;z-index:2147483647;background:#641c24;color:white;padding:24px;font:18px sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:70vh;overflow:auto";
+        errorPanel.textContent = "EOS-503 could not load. Please reload the page. If this continues, contact the researcher with this message.\n\n" + String(message);
+        document.body.appendChild(errorPanel);
+        console.error("EOS-503 startup failed:", message);
+      }
       var script = document.createElement("script");
       script.src = loaderUrl;
+      script.onerror = () => showLoadFailure("Could not download " + loaderUrl + ". The build may be missing or unavailable.");
       script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
+        try {
+          if (typeof createUnityInstance !== "function") {
+            throw new Error("The downloaded Unity loader is invalid: " + loaderUrl);
+          }
+          createUnityInstance(canvas, config, (progress) => {
+          if (loadingFailed) return;
           var percentage = Math.round(progress * 100);
           customFill.style.width = percentage + "%";
           customLabel.textContent = percentage + "%";
@@ -115,9 +135,10 @@
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
           };
-        }).catch((message) => {
-          alert(message);
-        });
+          }).catch(showLoadFailure);
+        } catch (error) {
+          showLoadFailure(error.message || error);
+        }
       };
       document.body.appendChild(script);
     </script>
